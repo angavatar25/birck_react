@@ -101,6 +101,10 @@ function IndexPage(props) {
                 />
             )
     )
+    const userChoiceDropdown = (e) => {
+        setuserChoice(e.target.value)
+        setname('')
+    }
     return (
         <div className='app-container'>
             <div>
@@ -111,7 +115,7 @@ function IndexPage(props) {
                 onChange={event => setname(event.target.value)}
                 placeholder='Type to search users or repositories...'>
             </SearchInput>
-            <SelectDropdown onChange={(e) => setuserChoice(e.target.value)}>
+            <SelectDropdown onChange={userChoiceDropdown}>
                 <option value="" hidden>
                     Type
                 </option>
@@ -120,7 +124,8 @@ function IndexPage(props) {
             </SelectDropdown>
             <CardContent>
                 {
-                    initial ? <p>Type to search for a user/repository</p> : props.userData.length > 0 || props.repositoryData.length > 0 ?
+                    initial ? <p>Type to search for a user/repository</p> : 
+                    props.userData.length > 0 || props.repositoryData.length > 0 ?
                     <Grid>
                         {
                             userChoice === 'users' ? 
@@ -132,7 +137,8 @@ function IndexPage(props) {
             </CardContent>
             <div>
                 {
-                    initial ? '' : userChoice !== '' && props.userData.length > 0 && props.repositoryData.length > 0 ?
+                    initial ? '' : 
+                    props.userData.length > 0 || props.repositoryData.length > 0 ?
                     <PaginationContainer>
                         <ButtonPagination disabled={currentPage === 1} onClick={() => prevPage()}>Prev</ButtonPagination>
                         {
