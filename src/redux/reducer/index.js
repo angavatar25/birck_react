@@ -1,7 +1,9 @@
 import repoReducer from "./repoReducer";
 import userReducer from './userReducer'
 
-export default {
+const reducerIndex = {
     user: userReducer,
     repo: repoReducer
 }
+
+export default reducerIndex

@@ -124,7 +124,7 @@ function IndexPage(props) {
             </SelectDropdown>
             <CardContent>
                 {
-                    initial ? <p>Type to search for a user/repository</p> : 
+                    initial ? <p>Type to search users or repositories</p> : 
                     props.userData.length > 0 || props.repositoryData.length > 0 ?
                     <Grid>
                         {

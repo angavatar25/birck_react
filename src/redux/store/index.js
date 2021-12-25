@@ -15,10 +15,12 @@ let persistedReducer = persistCombineReducers(config,reducer)
 
 const middleware = [thunk]
 
-export default () => {
+const Store = () => {
     let store = createStore(persistedReducer, composeWithDevTools(applyMiddleware(...middleware)))
     let persistor = persistStore(store)
     return {
         store, persistor
     }
 }
+
+export default Store
