@@ -92,6 +92,16 @@ export const GitProfile = Styled.p`
     cursor: pointer;
 `
 
+export const PaginationContainer = Styled.div`
+    display: flex;
+    gap: 1.5rem;
+`
+
+export const ButtonPagination = Styled.button`
+    background-color:  '#1E2B48';
+    color: 'white';
+`
+
 export const Pagination = Styled.button`
     background-color: ${props => props.isActive ? '#1E2B48': 'transparent'};
     color: ${props => props.isActive ? 'white' : 'black'};

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { CardContent, Grid, Pagination, SearchInput, SelectDropdown, Title } from '../styles';
+import { ButtonPagination, CardContent, Grid, Pagination, PaginationContainer, SearchInput, SelectDropdown, Title } from '../styles';
 import '../App.css'
 import { connect } from 'react-redux';
 import { getSearchRepository, getSearchUser, getUserDetail } from '../redux/action';
@@ -8,7 +8,7 @@ import CardRepoList from '../components/CardRepoList';
 
 function IndexPage(props) {
     const [name, setname] = useState('')
-    const [userChoice, setuserChoice] = useState('users')
+    const [userChoice, setuserChoice] = useState('')
     const [initial, setinitial] = useState(false)
     const [currentPage, setcurrentPage] = useState(1)
     const totalPage = parseInt(10)
@@ -47,13 +47,13 @@ function IndexPage(props) {
         setcurrentPage(currentPage - 1)
         showResult(currentPage - 1)
     }
-    const showResult = (page) => {
+    const showResult = async (page) => {
         const data = {
             q: name,
             per_page: 100,
             page: page
         }
-        setcurrentPage(page)
+        await setcurrentPage(page)
         if(userChoice === 'users') {
             props.getUsers(data)
         } else if(userChoice === 'repo') {
@@ -82,6 +82,25 @@ function IndexPage(props) {
             setinitial(true)
         }
     },[name])
+    const usersCard = (data) => data.map((index, i) => 
+        (
+            <CardList
+                userName={index.login}
+                key={i}
+                img={index.avatar_url}
+                name={index.login}
+            />
+        )
+    )
+    const repoCard = (data) => data.map((index, i) =>
+            (
+                <CardRepoList
+                    key={i}
+                    repoName={index.full_name}
+                    img={index.owner.avatar_url}
+                />
+            )
+    )
     return (
         <div className='app-container'>
             <div>
@@ -101,36 +120,21 @@ function IndexPage(props) {
             </SelectDropdown>
             <CardContent>
                 {
-                    initial ? <p>Type to search for a user/repository</p> :
+                    initial ? <p>Type to search for a user/repository</p> : props.userData.length > 0 || props.repositoryData.length > 0 ?
                     <Grid>
                         {
-                            userChoice === 'users' ? props.userData && props.userData.map((index, i) => {
-                            return (
-                                <CardList
-                                    userName={index.login}
-                                    key={i}
-                                    img={index.avatar_url}
-                                    name={index.login}
-                                />
-                            )
-                            }) : props.repositoryData && props.repositoryData.map((index, i) => {
-                                return (
-                                    <CardRepoList
-                                        key={i}
-                                        repoName={index.full_name}
-                                        img={index.owner.avatar_url}
-                                    />
-                                )
-                            })
+                            userChoice === 'users' ? 
+                            usersCard(props.userData) : userChoice === 'repo' ?
+                            repoCard(props.repositoryData) : <p>Please choose user/repo</p>
                         }
-                    </Grid>
+                    </Grid> : <p>No user/repository found</p>
                 }
             </CardContent>
             <div>
                 {
-                    initial ? '' : 
-                    <div style={{display: 'flex', gap: '1.5rem'}}>
-                        <button onClick={() => prevPage()}>Prev</button>
+                    initial ? '' : userChoice !== '' && props.userData.length > 0 && props.repositoryData.length > 0 ?
+                    <PaginationContainer>
+                        <ButtonPagination disabled={currentPage === 1} onClick={() => prevPage()}>Prev</ButtonPagination>
                         {
                             range.map((index, i) => {
                                 return(
@@ -140,8 +144,8 @@ function IndexPage(props) {
                                 )
                             })
                         }
-                        <button onClick={() => nextPage()}>Next</button>
-                    </div>
+                        <ButtonPagination disabled={currentPage === totalPage} onClick={() => nextPage()}>Next</ButtonPagination>
+                    </PaginationContainer> : ''
                 }
             </div>
         </div>
@@ -150,7 +154,9 @@ function IndexPage(props) {
 
 const reduxState = (state) => ({
     userData: state.user.data,
-    repositoryData: state.repo.repository
+    repositoryData: state.repo.repository,
+    user: state.user,
+    repo: state.repo
 })
 
 const reduxDispatch = (dispatch) => ({
