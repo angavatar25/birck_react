@@ -33,36 +33,41 @@ function RepoDetail(props) {
     }
     return (
         <div className='app-container'>
-            <div className="repo-detail">
-                <div className="flex">
-                    <ProfilePictureDetail Img={props.repoDetail.owner.avatar_url}/>
-                    <div className='my-auto'>
-                        <p className='detail-name'>{props.repoDetail.name}</p>
-                        <GitProfile onClick={() => LinkRepo(props.repoDetail.html_url)}>
-                            <i className="fab fa-github mr-10"></i>
-                            {props.repoDetail.html_url}
-                        </GitProfile>
+            {
+                props.repo.error ?
+                <p>{props.repo.errorMessage}</p> : props.repo.loading ? <p>Loading</p> :
+                <div className="repo-detail">
+                    <div className="flex">
+                        <ProfilePictureDetail Img={props.repoDetail.owner.avatar_url}/>
+                        <div className='my-auto'>
+                            <p className='detail-name'>{props.repoDetail.name}</p>
+                            <GitProfile onClick={() => LinkRepo(props.repoDetail.html_url)}>
+                                <i className="fab fa-github mr-10"></i>
+                                {props.repoDetail.html_url}
+                            </GitProfile>
+                        </div>
                     </div>
+                    <ProfileFollowersDetail>
+                        {
+                            Object.keys(repoDetails).map((key, i) => {
+                                return (
+                                    <div className='flex-1' key={i}>
+                                        <p>{repoDetails[key].name}</p>
+                                        <p className='number-24 font-bold'>{repoDetails[key].val}</p>
+                                    </div>
+                                )
+                            })
+                        }
+                    </ProfileFollowersDetail>
                 </div>
-                <ProfileFollowersDetail>
-                    {
-                        Object.keys(repoDetails).map((key, i) => {
-                            return (
-                                <div className='flex-1' key={i}>
-                                    <p>{repoDetails[key].name}</p>
-                                    <p className='number-24 font-bold'>{repoDetails[key].val}</p>
-                                </div>
-                            )
-                        })
-                    }
-                </ProfileFollowersDetail>
-            </div>
+            }
         </div>
     )
 }
 
 const reduxState = (state) => ({
-    repoDetail: state.repo.repoDetail
+    repoDetail: state.repo.repoDetail,
+    repo: state.repo
 })
 
 const reduxDispatch = (dispatch) => ({
